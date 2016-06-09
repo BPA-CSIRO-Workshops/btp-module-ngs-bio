@@ -23,6 +23,7 @@ After completing this module the trainee should be able to:
 \begin{itemize}
   \item Find gene ontology enrichment in a list of differentially expressed genes using R-based packages.
   \item Running GO enrichment analysis using the web tool DAVID and the web tool Gorilla
+  \item To run webtools such as REVIGO and STRING
   \end{itemize}
 % END KLOs
 
@@ -34,7 +35,7 @@ After completing this module the trainee should be able to:
 \subsection{Tools Used}
 \begin{description}[style=multiline,labelindent=0cm,align=left,leftmargin=0.5cm]
   \item [Goana from Limma]\hfill\\
-  	\url{}
+  	\url{https://bioconductor.org/packages/release/bioc/html/limma.html}
   \item[DAVID]\hfill\\
   	\url{http://david.abcc.ncifcrf.gov}
   \item[GOrilla]\hfill\\
@@ -45,12 +46,6 @@ After completing this module the trainee should be able to:
     \url{http://string-db.org}
 \end{description}
 
-\section{Useful Links}
- 
-\begin{description}[style=multiline,labelindent=0cm,align=left,leftmargin=0.5cm]
-  \item[FASTQ Encoding]\hfill\\
-    \url{https://david.ncifcrf.gov/helps/functional_annotation.html}
-\end{description}
 
 \newpage
 % END: Resources Used
@@ -73,7 +68,7 @@ First we will go back to the R environment and use the function GOana associated
 
 \begin{steps}
 \begin{lstlisting}
-DE_GOana<-goana(fit_v, coef=2, geneid=fit_v$genes$Entrez, FDR=0.05, species = "Hs", trend=T, plot=F )
+DE_GOana<-goana(fit_v, coef=2, geneid=fit_v$genes$Entrez, FDR=0.05, species = "Hs", trend=F, plot=F )
 \end{lstlisting}
 \end{steps}
 
@@ -82,15 +77,21 @@ Now we will look at the most significant biological process (BP)ontology terms
 
 \begin{steps}
 \begin{lstlisting}
-DE_GOana_top_BP_down<- topGO(DE_GOana, ontology=c("BP"), sort = "down", number=150L, truncate.term=50)head(DE_GOana_top_BP_down, 10)DE_GOana_top_BP_up<- topGO(DE_GOana, ontology=c("BP"), sort = "up", number=150L, truncate.term=50)head(DE_GOana_top_BP_up, 10)
+DE_GOana_top_BP_down<- topGO(DE_GOana, ontology=c("BP"), sort = "down", number=150L, truncate.term=50)
+head(DE_GOana_top_BP_down, 10)
+DE_GOana_top_BP_up<- topGO(DE_GOana, ontology=c("BP"), sort = "up", number=150L, truncate.term=50)
+head(DE_GOana_top_BP_up, 10)
 \end{lstlisting}
 \end{steps}
 
-Rather than looking at biological process (BP) let’s now look at molecular function (MF) terms
+Rather than looking at biological process (BP) let\’s now look at molecular function (MF) terms
 
 \begin{steps}
 \begin{lstlisting}
-DE_GOana_top_MF_down<- topGO(DE_GOana, ontology=c("MF"), sort = "down", number=150L, truncate.term=50)head(DE_GOana_top_MF_down, 10)DE_GOana_top_MF_up<- topGO(DE_GOana, ontology=c("MF"), sort = "up", number=150L, truncate.term=50)head(DE_GOana_top_MF_up, 10)
+DE_GOana_top_MF_down<- topGO(DE_GOana, ontology=c("MF"), sort = "down", number=150L, truncate.term=50)
+head(DE_GOana_top_MF_down, 10)
+DE_GOana_top_MF_up<- topGO(DE_GOana, ontology=c("MF"), sort = "up", number=150L, truncate.term=50)
+head(DE_GOana_top_MF_up, 10)
 \end{lstlisting}
 \end{steps}
 
@@ -104,7 +105,7 @@ What is the general theme emerging when we look at biological process in the dow
 Hint: Have a look at the top GO categories you are getting in the results. 
 \end{answer}
 
-How many of the upregulated DEGs are annotated with the biological process term “cell division: GO:0051301” ? 
+How many of the upregulated DEGs are annotated with the biological process term emph{cell division: GO:0051301} ? 
 \begin{answer}
 Answer = 76. 
 \end{answer}
@@ -118,7 +119,7 @@ Answer = 112
 \end{note}
 
 \section{Gene ontology analysis with DAVID}
-Click on your Firefox web browser. Go to the DAVID website: \url{http://david.abcc.ncifcrf.gov}. Go to your edgeR folder and open the file \texttt{voom\_res\_sig\_lfc.txt} using LibreOffice Calc. For the separator options in LibreOffice Calc choose “Separated by tab”. Once you have opened this file copy the \emph{Ensembl Gene Ids} (Column A). This list can then be pasted into DAVID.\\\\
+Click on your Firefox web browser. Go to the DAVID website: \url{http://david.abcc.ncifcrf.gov}. Go to your edgeR folder and open the file \texttt{voom\_res\_sig\_lfc.txt} using LibreOffice Calc. For the separator options in LibreOffice Calc choose \emph{Separated by tab}. Once you have opened this file copy the \emph{Ensembl Gene Ids} (Column A). This list can then be pasted into DAVID.\\\\
 Screenshots of the DAVID website and the steps to move through the website are provided in the presentation prepared for this session. Use that material to work through this exercise.\\\\
 We will use the Functional Annotation Clustering tool in DAVID. First we will uncheck all the defaults and look only at the GO terms involving biological process. After unchecking all the defaults, expand Gene Ontology and select GOTERM\_BP\_FAT. Then select the button Functional Annotation Clustering. \\\\
 This will bring up a screen where GO terms are clustered.  Statistical testing is performed to assess whether the GO terms are more enriched in the list of DEGs than would be expected by chance. You will see a column of P\_Value and also adjusted P values.  Have a look at the brief description of the statistical test used in DAVID (\url{https://david.ncifcrf.gov/helps/functional_annotation.html}).
@@ -141,7 +142,9 @@ Answers may vary based on the genes entered and the options selected.
 \end{questions}
 \subsection{Gene ontology analysis with GOrilla}
 
-Click on your Firefox web browser.  Go to the GOrilla website: \url{http://cbl-gorilla.cs.technion.ac.il}For this tool we need to use a background list of genes. Open the file \texttt{voom\_res.txt} using LibreOffice Calc.  Copy the \emph{Ensembl Gene Ids} (Column A) and paste this into GOrilla as the background set.\\As in the previous exercise we will use the DEGs found by voom (\texttt{voom\_res\_sig\_lfc.txt}) as the Target set. \\\\WE will firstly look for enriched GO process terms.  Screenshots of the website showing the steps you need to follow are in the presentation for this session.\\\\GOrilla will display the GO term hierarchy. This shows you which terms are parent and child terms and how the terms are related.Under this you will find a table of the most significantly enriched GO terms.  Have a look at the DEGs associated with the most enriched clusters.
+Click on your Firefox web browser.  Go to the GOrilla website: \url{http://cbl-gorilla.cs.technion.ac.il}\\
+For this tool we will use a background list of genes. Open the file \texttt{voom\_res.txt} using LibreOffice Calc.  Copy the \emph{Ensembl Gene Ids} (Column A) and paste this into GOrilla as the background set.\\As in the previous exercise we will use the DEGs found by voom (\texttt{voom\_res\_sig\_lfc.txt}) as the Target set. \\\\
+We will firstly look for enriched GO process terms.  Screenshots of the website showing the steps you need to follow are in the presentation for this session.\\\\GOrilla will display the GO term hierarchy. This shows you which terms are parent and child terms and how the terms are related.Under this you will find a table of the most significantly enriched GO terms.  Have a look at the DEGs associated with the most enriched clusters.
 
 \subsection{Questions and Answers}
 Based on the above section, we have a little quiz for you:
@@ -154,12 +157,14 @@ What are the direct child terms of \emph{regulation of cell proliferation}?
 \begin{answer}
 regulation of stem cell proliferation, regulation of sooth muscle cell proliferation, positive regulation of cell proliferation
 \end{answer}
-What is the enrichment score for “regulation of cell proliferation” ? How is this calculated (Hint: scroll down the page for the heading Enrichment). 
+What is the enrichment score for \emph{regulation of cell proliferation} ? How is this calculated (Hint: scroll down the page for the heading Enrichment). 
 \begin{answer}
 Answer: 1.58 ((101/867)/(893/12099))
 \end{answer}
 \end{questions}
-\subsection{REVIGO to reduce redundancy and visualise}We can use the results generated by the GOrilla web tool as input to REVIGO which will summarise the GO data and allow us to visualize the simplified data.Click on the link Visualize output in REViGO. Follow the screen shots in the presentation.Go to the treemap view.
+\subsection{REVIGO to reduce redundancy and visualise}
+
+We can use the results generated by the GOrilla web tool as input to REVIGO which will summarise the GO data and allow us to visualize the simplified data.Click on the link Visualize output in REViGO. Follow the screen shots in the presentation.Go to the treemap view.
 
 \begin{questions}
 What are the main functional categories emerging in this analysis?
@@ -167,13 +172,17 @@ What are the main functional categories emerging in this analysis?
 
 \end{answer}
 
+\section{STRING}
+
 Using STRING to look at networks that may be formed by the DEGsClick on your Firefox web browser.  Go to the STRING website: \url{http://string-db.org}
 For this exercise we will only use the top 500 DEGs. Go to the file (\texttt{voom\_res\_sig\_lfc.txt}) copy only the top 500. These will be pasted as input to the STRING website. Follow the screen shots in the presentation.\\\\You will see a large interaction network being built from the 500 DEGs.We will refine this by clicking on the Data settings tab and selecting \emph{high confidence} (see the screen shot in the presentation).
 Look at the gene clusters that are generated.
 \end{questions}
 
 \begin{questions}
-Find the gene CDK1. Look at the cluster generated around this gene. What other DEGs are interaction partners of CDK1.  Click on CDK1 and find what functions it is involved in. Click on the interaction partners of CDK1 and find their functions. Does this help in further explaining some of the gene ontology results?
+Find the gene CDK1. Look at the cluster generated around this gene. What other DEGs are interaction partners of CDK1.\\
+Click on CDK1 and find what functions it is involved in. Click on the interaction partners of CDK1 and find their functions. \\
+Does this help in further explaining some of the gene ontology results?
 \begin{answer}
 Explore other clusters that are formed in this analysis.
 \end{answer}
